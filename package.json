@@ -2,7 +2,7 @@
   "name": "vite_react_shadcn_ts",
   "private": true,
   "version": "0.0.0",
-  "homepage": "https://IamSamk.github.io/GovSchemes", 
+  "homepage": "https://iamsamk.github.io/GovSchemes", 
   "type": "module",
   "scripts": {
     "dev": "vite",
