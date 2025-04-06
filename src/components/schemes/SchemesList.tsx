@@ -1,7 +1,9 @@
+
 import { useEffect, useState } from "react";
 import { MotionDiv } from "@/assets/animations";
 import SchemeCard from "@/components/SchemeCard";
 import { Lightbulb } from "lucide-react";
+import { getImageForCategory } from "@/utils/imageUtils";
 
 interface SchemeResult {
   id: string;
@@ -23,44 +25,10 @@ const SchemesList: React.FC<SchemesListProps> = ({ schemes }) => {
   const [enhancedSchemes, setEnhancedSchemes] = useState<SchemeResult[]>([]);
 
   useEffect(() => {
-    const schemeImages = [
-      "/scheme-images/agriculture.jpg",
-      "/scheme-images/education.jpg",
-      "/scheme-images/healthcare.jpg",
-      "/scheme-images/housing.jpg",
-      "/scheme-images/women-empowerment.jpg",
-      "/scheme-images/startup.jpg",
-      "/scheme-images/rural.jpg",
-      "/scheme-images/digital.jpg"
-    ];
-    
-    let updatedSchemes = schemes.map((scheme, index) => {
-      if (scheme.imageUrl) {
-        return scheme;
-      }
-      
-      const ministryLower = scheme.ministry.toLowerCase();
-      let imageUrl = "";
-      
-      if (ministryLower.includes("agri")) {
-        imageUrl = "/scheme-images/agriculture.jpg";
-      } else if (ministryLower.includes("education") || ministryLower.includes("skill")) {
-        imageUrl = "/scheme-images/education.jpg";
-      } else if (ministryLower.includes("health")) {
-        imageUrl = "/scheme-images/healthcare.jpg";
-      } else if (ministryLower.includes("housing") || ministryLower.includes("urban")) {
-        imageUrl = "/scheme-images/housing.jpg";
-      } else if (ministryLower.includes("women") || ministryLower.includes("child")) {
-        imageUrl = "/scheme-images/women-empowerment.jpg";
-      } else if (ministryLower.includes("startup") || ministryLower.includes("msme")) {
-        imageUrl = "/scheme-images/startup.jpg";
-      } else if (ministryLower.includes("rural")) {
-        imageUrl = "/scheme-images/rural.jpg";
-      } else if (ministryLower.includes("digital") || ministryLower.includes("it")) {
-        imageUrl = "/scheme-images/digital.jpg";
-      } else {
-        imageUrl = schemeImages[index % schemeImages.length];
-      }
+    // Map schemes to include proper images based on ministry/category
+    const updatedSchemes = schemes.map((scheme) => {
+      // Use the utility function to get the appropriate image
+      const imageUrl = getImageForCategory(scheme.ministry);
       
       return { ...scheme, imageUrl };
     });
