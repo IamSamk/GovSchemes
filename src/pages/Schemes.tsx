@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import SchemesHeader from "@/components/schemes/SchemesHeader";
@@ -13,9 +14,10 @@ interface SchemeResult {
   deadline?: string;
   location?: string;
   matchPercentage?: number;
+  imageUrl?: string;
 }
 
-// Mock data for all schemes
+// Mock data for all schemes with categories
 const allSchemes = [
   {
     id: "1",
