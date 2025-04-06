@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -7,6 +7,8 @@ import { Calendar, MessageCircle, Phone, Star, User } from "lucide-react";
 import { Mentor } from "@/types/mentor";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link, useNavigate } from "react-router-dom";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { mentorImages } from "@/utils/imageUtils";
 
 interface MentorCardProps {
   mentor: Mentor;
@@ -21,6 +23,7 @@ const MentorCard: React.FC<MentorCardProps> = ({
 }) => {
   const { t } = useLanguage();
   const navigate = useNavigate();
+  const [imgError, setImgError] = useState(false);
 
   const renderRating = (rating: number) => {
     return (
@@ -41,6 +44,12 @@ const MentorCard: React.FC<MentorCardProps> = ({
     navigate(`/mentors/${mentor.id}`);
   };
 
+  // Generate a deterministic index based on mentor ID for consistent images
+  const mentorIdHash = Array.from(mentor.id).reduce((acc, char) => acc + char.charCodeAt(0), 0);
+  const imageIndex = mentorIdHash % mentorImages.length;
+  const defaultAvatar = mentorImages[imageIndex];
+  const displayAvatar = imgError ? defaultAvatar : (mentor.avatar || defaultAvatar);
+
   return (
     <Card 
       className="overflow-hidden transition-all hover:shadow-lg cursor-pointer bg-white/80 backdrop-blur-sm border-primary/10"
@@ -49,11 +58,15 @@ const MentorCard: React.FC<MentorCardProps> = ({
       <div className="p-6">
         <div className="flex items-start gap-4">
           <div className="h-20 w-20 rounded-full overflow-hidden bg-secondary shadow-md border-2 border-primary/20">
-            <img 
-              src={mentor.avatar} 
-              alt={mentor.name}
-              className="h-full w-full object-cover"
-            />
+            <Avatar className="h-full w-full">
+              <AvatarImage 
+                src={displayAvatar} 
+                alt={mentor.name}
+                className="h-full w-full object-cover"
+                onError={() => setImgError(true)} 
+              />
+              <AvatarFallback>{mentor.name.charAt(0)}</AvatarFallback>
+            </Avatar>
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-semibold text-foreground">{mentor.name}</h3>
