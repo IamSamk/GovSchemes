@@ -1,10 +1,12 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, User, Star } from "lucide-react";
 import { Mentor } from "@/types/mentor";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { motion } from "framer-motion";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { mentorImages } from "@/utils/imageUtils";
 
 interface MentorProfileProps {
   mentor: Mentor;
@@ -12,6 +14,7 @@ interface MentorProfileProps {
 
 const MentorProfile: React.FC<MentorProfileProps> = ({ mentor }) => {
   const { t } = useLanguage();
+  const [imgError, setImgError] = useState(false);
   
   const renderRating = (rating: number) => {
     return (
@@ -28,6 +31,11 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ mentor }) => {
     );
   };
 
+  // Use a random mentor image or the provided avatar
+  const randomMentorImage = mentorImages[Math.floor(Math.random() * mentorImages.length)];
+  const defaultAvatar = randomMentorImage;
+  const displayAvatar = imgError ? defaultAvatar : (mentor.avatar || defaultAvatar);
+
   return (
     <motion.div 
       className="bg-card rounded-lg p-6 shadow-sm mb-6 border border-transparent hover:border-primary/20 transition-all duration-300"
@@ -41,11 +49,15 @@ const MentorProfile: React.FC<MentorProfileProps> = ({ mentor }) => {
           className="h-32 w-32 rounded-full overflow-hidden bg-secondary mb-4 border-2 border-transparent hover:border-primary/30 transition-all duration-300"
           whileHover={{ scale: 1.05 }}
         >
-          <img 
-            src={mentor.avatar} 
-            alt={mentor.name}
-            className="h-full w-full object-cover"
-          />
+          <Avatar className="h-full w-full">
+            <AvatarImage 
+              src={displayAvatar} 
+              alt={mentor.name}
+              className="h-full w-full object-cover"
+              onError={() => setImgError(true)}
+            />
+            <AvatarFallback>{mentor.name.charAt(0)}</AvatarFallback>
+          </Avatar>
         </motion.div>
         <h1 className="text-2xl font-bold mb-1 text-foreground">{mentor.name}</h1>
         <div className="mb-2">{renderRating(mentor.rating)}</div>
